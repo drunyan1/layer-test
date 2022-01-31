@@ -1,2 +1,7 @@
 # layer-test
  
+This project is slightly unusual in that it has two different package.json files in it - one for the lambda, and one in layer/nodejs to contain the code for the layer. You will need to run `npm i` in both places.
+
+When deployed, this project will create a lambda layer that contains the Chromium runtime specific to the AWS lambda environment, provided by [chrome-aws-lambda](https://www.npmjs.com/package/chrome-aws-lambda). It will also create the `makePdf` lambda, and assign the layer to it. The lambda does not contain a Chromium runtime, as it only uses [puppeteer-core](https://www.npmjs.com/package/puppeteer-core), which does not package the Chromium binary. This is useful because it keeps the size of the lambda very small, and it just relies on the layer to provide the Chromium binary it will need.
+
+With just those pieces in place, the lambda cannot be tested locally with `serverless offline`. The puppeteer-core package does not provide a Chromium runtime, and the one packaged in chrome-aws-lambda will not run on most systems, since it is geared specifically to run in the lambda environment (Linux x64). To enable local testing, [puppeteer](https://www.npmjs.com/package/puppeteer) is included as a dev dependency, and there is a switch to use that package instead of puppeteer-core if the system detects that you are running locally (by checking `process.env.STAGE`).
