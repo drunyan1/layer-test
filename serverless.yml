@@ -1,0 +1,52 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: layer-test
+useDotenv: true
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, 'local'}
+  region: us-east-2
+
+# you can add packaging information here
+#package:
+#  patterns:
+#    - '!exclude-me.js'
+#    - '!exclude-me-dir/**'
+#    - include-me.js
+#    - include-me-dir/**
+
+layers:
+  chrome:
+    path: layer
+
+functions:
+  makePdf:
+    handler: handler.makePdf
+    memorySize: 1536 # RAM size for the function
+    timeout: 15
+    layers: 
+      - { Ref: ChromeLambdaLayer }
+      # - arn:aws:lambda:us-east-2:764866452798:layer:chrome-aws-lambda:25
+    events:
+      - http:
+          path: /makePdf
+          method: post
+
