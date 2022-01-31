@@ -39,7 +39,7 @@ layers:
 
 functions:
   makePdf:
-    handler: handler.makePdf
+    handler: src/handlers/handler.makePdf
     memorySize: 1536 # RAM size for the function
     timeout: 15
     layers: 
